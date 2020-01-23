@@ -1,7 +1,6 @@
 # for mapping events from the obspy catalog file into arcGIS
 from obspy import read_events
 import arcpy
-
 # The file location of the obspy event catalog
 input_file = arcpy.GetParameterAsText(0)
 
