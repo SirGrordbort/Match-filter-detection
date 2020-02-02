@@ -2,7 +2,6 @@ import cartopy
 from eqcorrscan import Party
 from matplotlib import pyplot as plt
 import math
-import datetime
 
 
 # class for giving a new line type every time next line is called
