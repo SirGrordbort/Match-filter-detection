@@ -1,6 +1,7 @@
 # for mapping events from the obspy catalog file into arcGIS
 import arcpy
 import obspy
+import eqcorrscan
 from obspy import read_events
 # The file location of the obspy event catalog
 input_file = arcpy.GetParameterAsText(0)
@@ -9,6 +10,7 @@ input_file = arcpy.GetParameterAsText(0)
 earthquakes = arcpy.GetParameter(1)
 
 catalog = read_events(input_file)
+
 points = []
 # Makes the initial feature class from the coordinates of the events stored in the catalog
 for event in catalog:
