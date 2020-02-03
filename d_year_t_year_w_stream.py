@@ -1,5 +1,4 @@
 # for making a party from a year of templates and data including the streams
-# FIXME doesn't quite work yet
 import logging
 
 logging.basicConfig(

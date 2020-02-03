@@ -1,18 +1,4 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Tue Jan 21 10:51:07 2020
 
-@author: messerto
-"""
-
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Jan 16 10:22:21 2020
-
-@author: messerto
-"""
 
 import logging
     
