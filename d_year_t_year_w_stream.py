@@ -21,13 +21,13 @@ client = Client("http://service.geonet.org.nz")
 # -is this how eqcorrscan is meant to be used i.e long time period many templates?
 
 # for analysis
-detection_t1 = UTCDateTime(2019, 11, 9)
-detection_num_days = 3
+detection_t1 = UTCDateTime(2018, 11, 9)
+detection_num_days = 396
 
 # for template creation
-num_days = 3
+num_days = 396
 day_len = 86400
-t1 = UTCDateTime(2019, 11, 12)
+t1 = UTCDateTime(2020, 1, 9)
 t2 = t1 + (num_days * day_len)
 catalog = client.get_events(
     starttime=t1, endtime=t2, minmagnitude=2.4, minlatitude=-37.95936, maxlatitude=-36.84226,
@@ -74,7 +74,7 @@ for detection_file in glob.glob("year_with_stream/*"):
 stream = Stream()
 for stream_file in glob.glob("y_d_y_t_w_s/*"):
     stream += read(stream_file)
-
-stream.write("year_streams")
+stream.split()
+stream.write("year_streams", format = "MSEED")
 party.write("year_party")
 print('done')
