@@ -1,3 +1,4 @@
+
 from matplotlib import pyplot as plt
 import prep_4_plotting
 import datetime
@@ -18,18 +19,20 @@ legend_titles = []
 for fam_plot_info in fam_plot_infos:
     date_and_index_list = fam_plot_info.detection_list
     family_datetimes = []
-    detection_num = []
+    cumulative_detections = []
+    detections = []
     count = 0
     for date_and_index in date_and_index_list:
         count += 1
         family_datetimes.append(date_and_index.get_time())
-        detection_num.append(count)
-    linetype = prep_4_plotting.LineType()
+        cumulative_detections.append(date_and_index.get_index())
+        detections.append(count)
     color = fam_plot_info.color
-    lines_for_legend.append(ax.plot(family_datetimes, detection_num, ls = '-',c = color)[0])
+    lines_for_legend.append(ax.scatter(family_datetimes, cumulative_detections, marker=',',s = 10, c=color))
+    ax.plot(family_datetimes, detections, ls = '-',c = color)
     template_time = fam_plot_info.family.template.event.preferred_origin().time.datetime
     legend_titles.append(make_legend_title(fam_plot_info.family))
-    plt.axvline(template_time, ymin=0, ls='--', c=color, alpha=0.8,lw = 1) # adds a vertical line at the location of each template
+    plt.axvline(template_time, ymin=0, ls='-', c=color, alpha=1,lw = 1) # adds a vertical line at the location of each template
 eruption_time = datetime.datetime(2019,12,9,14,11)
 lines_for_legend.append(plt.axvline(eruption_time, ymin = 0, ls = "--", label = "eruption", color = "black", lw = 1))
 legend_titles.append("white island eruption")
@@ -37,7 +40,7 @@ legend_titles.append("white island eruption")
 ax.set_xlabel('date')
 ax.set_ylabel('detection number')
 box = ax.get_position()
-ax.set_position([box.x0, box.y0, box.width * 0.8, box.height])
 ax.set_ylim(ymin = 0)
-legend = ax.legend(lines_for_legend, legend_titles, bbox_to_anchor=(1, 1))
+ax.set_position([box.x0, box.y0, box.width * 0.8, box.height])
+legend = ax.legend(lines_for_legend, legend_titles, bbox_to_anchor=(1, 1), markerscale = 1 )
 plt.show()

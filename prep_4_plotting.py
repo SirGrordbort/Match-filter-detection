@@ -14,25 +14,25 @@ class LineType:
         self.num_color_calls = 0
 
         # currently not used but potentially useful
-        self.pointstyles = ['.', 'x', '+']
+        self.linestyles = [':', '-', '--', '-.']
         self.num_calls = 0  # how many times this class has been called on to provide a new line style
-        self.point_index = 0  # the index in the line styles list of the last line style to be sent out
+        self.line_index = 0  # the index in the line styles list of the last line style to be sent out
         self.col_index = 0  # the index in the color list of the last line color to be sent out
 
 
     # turns the number of times this class has been called on for a new line type into an index for each list
     def num_calls_to_2D(self):
-        self.point_index = math.floor(self.num_calls / len(self.colors))
-        self.col_index = self.num_calls - 11 * self.point_index
+        self.line_index = math.floor(self.num_calls / len(self.colors))
+        self.col_index = self.num_calls - 11 * self.line_index
 
     # currently not used but potentially useful
     def next_line(self):
         # when all line types have been exhasted throws an error if another type is requested
-        if self.point_index > 2:
+        if self.line_index > 3:
             raise RuntimeError("out of line types!")
 
         color = self.colors[self.col_index]
-        style = self.pointstyles[self.point_index]
+        style = self.linestyles[self.line_index]
         self.num_calls += 1
         self.num_calls_to_2D()
         return style, color

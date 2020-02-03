@@ -27,10 +27,10 @@ detection_num_days = 396
 # for template creation
 num_days = 396
 day_len = 86400
-t1 = UTCDateTime(2020, 1, 9)
+t1 = UTCDateTime(2018, 11, 9)
 t2 = t1 + (num_days * day_len)
 catalog = client.get_events(
-    starttime=t1, endtime=t2, minmagnitude=2.4, minlatitude=-37.95936, maxlatitude=-36.84226,
+    starttime=t1, endtime=t2, minmagnitude=3.5, minlatitude=-37.95936, maxlatitude=-36.84226,
     minlongitude=176.63818, maxlongitude=177.80548)
 
 # Get rid of duplicately picked arrivals.
@@ -64,7 +64,7 @@ for day in range(1, detection_num_days):
         client=client, starttime=detection_t1 + (day - 1) * day_len, endtime=detection_t1 + day * day_len, threshold=9.,
         threshold_type="MAD", trig_int=2.0, plot=False, return_stream=True)
     _party.write("year_with_stream/Detections_day_{0}".format(day))
-    st.split()  # Required for writing to miniseed
+    st = st.split()  # Required for writing to miniseed
     st.write("y_d_y_t_w_s/{0}.ms".format(day), format="MSEED")
 
 party = Party()

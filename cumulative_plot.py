@@ -1,6 +1,7 @@
 
 from matplotlib import pyplot as plt
 import prep_4_plotting
+import datetime
 
 def make_legend_title(family):
     time = family.template.event.preferred_origin().time.datetime
@@ -8,7 +9,7 @@ def make_legend_title(family):
     num_detections = len(family.detections)
     return time_string + " " + str(num_detections) + " detections"
 
-fam_plot_infos = prep_4_plotting.prep("year_det_and_temp_party.tgz")
+fam_plot_infos = prep_4_plotting.prep("year_party_1.tgz")
 fig = plt.figure()
 ax = fig.add_axes([0.1, 0.1, 0.9, 0.9])
 lines_for_legend = []
@@ -27,7 +28,9 @@ for fam_plot_info in fam_plot_infos:
     template_time = fam_plot_info.family.template.event.preferred_origin().time.datetime
     legend_titles.append(make_legend_title(fam_plot_info.family))
     plt.axvline(template_time, ymin=0, ls='-', c=color, alpha=1) # adds a vertical line at the location of each template
-
+eruption_time = datetime.datetime(2019,12,9,14,11)
+lines_for_legend.append(plt.axvline(eruption_time, ymin = 0, ls = "--", label = "eruption", color = "black", lw = 1))
+legend_titles.append("white island eruption")
 # format axes
 ax.set_xlabel('date')
 ax.set_ylabel('detection number')
