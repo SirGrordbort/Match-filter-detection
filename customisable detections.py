@@ -88,15 +88,15 @@ def run(analysis_start, analysis_len, template_creation_start, template_creation
 
 
 
-analysis_start = UTCDateTime(2019, 11, 9)
-analysis_len = 3
-template_creation_start = UTCDateTime(2019, 11, 9)
-template_creation_len = 3
+analysis_start = UTCDateTime(2018, 12, 9)
+analysis_len = 396
+template_creation_start = UTCDateTime(2018, 12, 9)
+template_creation_len = 396
 write_streams = True
-intermediate_party_output = "test_partys"
-final_party_output = "test_party.tgz"
-intermediate_stream_output = "test_streams"
-final_stream_output = "test_stream"
+intermediate_party_output = "partys"
+final_party_output = "party.tgz"
+intermediate_stream_output = "streams"
+final_stream_output = "stream.ms"
 
 run(analysis_start, analysis_len, template_creation_start, template_creation_len, write_streams,intermediate_party_output,final_party_output,intermediate_stream_output,final_stream_output)
 print('done')
