@@ -108,7 +108,6 @@ fig = streams[family.detections[0].id].plot(equal_scale=False, size=(800, 600))
 # -"WARNING Cannot check if cccsum is better, used 7 channels for detection"?
 # -best way to save party data?
 st = st.merge()
-    
 repicked_catalog += party.lag_calc(st, pre_processed=False, shift_len=0.5, min_cc=0.4)
 
 # -assuming error "IndexError: list index out of range" comes from there being no repicked events in the catalog. Why not?

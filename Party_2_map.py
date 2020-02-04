@@ -15,10 +15,10 @@ arcpy.AddField_management(earthquakes, "Magnitude", "Double")
 arcpy.AddField_management(earthquakes, "Depth", "Double")
 arcpy.AddField_management(earthquakes, "Time", "String")
 arcpy.AddField_management(earthquakes, "Is_template", "String")
-
+arcpy.AddField_management(earthquakes, "family", "String")
 
 # adds a row of fields to the feature class
-def make_fields(is_template, eq_cursor, event, time):
+def make_fields(is_template, eq_cursor, event, time, family):
     origin = event.preferred_origin()
     desc = event.short_str()
     if origin is not None:
@@ -26,12 +26,12 @@ def make_fields(is_template, eq_cursor, event, time):
         shape = arcpy.PointGeometry(point)
         mag = event.preferred_magnitude().mag
         depth = event.preferred_origin().depth
-        eq_cursor.insertRow((shape, desc, mag, depth, time, is_template))
+        eq_cursor.insertRow((shape, desc, mag, depth, time, is_template, family))
     else:
-        eq_cursor.insertRow((None, desc, None, None, time, is_template))
+        eq_cursor.insertRow((None, desc, None, None, time, is_template, family))
 arcpy.AddMessage("party:" + str(party))
 
-eq_cursor = arcpy.da.InsertCursor(earthquakes, ("Shape", "Describe", "Magnitude", "Depth", "Time","Is_template",))
+eq_cursor = arcpy.da.InsertCursor(earthquakes, ("Shape", "Describe", "Magnitude", "Depth", "Time","Is_template","family",))
 try:
     for fam in party.families:
         template_event = fam.template.event
@@ -39,12 +39,12 @@ try:
         if template_origin is None:
             raise RuntimeError("origin for template should not be none")
         time = template_origin.time.isoformat(sep=' ')
-        make_fields("True", eq_cursor, template_event, time)
+        make_fields("True", eq_cursor, template_event, time, fam.template.name)
 
 
         for detection in fam.detections:
             event = detection.event
             time = detection.detect_time.isoformat(sep=' ')
-            make_fields("False", eq_cursor, event, time)
+            make_fields("False", eq_cursor, event, time, family = fam.template.name)
 finally:
     del eq_cursor
