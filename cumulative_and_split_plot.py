@@ -2,13 +2,8 @@
 from matplotlib import pyplot as plt
 import prep_4_plotting
 import datetime
+import Plotting_utilities
 
-# makes the text associated with each item in the legend
-def make_legend_title(family):
-    time = family.template.event.preferred_origin().time.datetime
-    time_string = str(time.year)[2:4] + "/" + str(time.month) + "/" + str(time.day) + " " + str(time.hour) + ":" + str(time.minute) + ":" + str(time.second) + "."
-    num_detections = len(family.detections)
-    return time_string + " " + str(num_detections) + " detections"
 
 # prepares the data in the given party for plotting
 fam_plot_infos = prep_4_plotting.prep("test_party.tgz")
@@ -42,7 +37,7 @@ for fam_plot_info in fam_plot_infos:
     ax.plot(family_datetimes, detections, ls = '-',c = color)
 
     # adding labels to the legend
-    legend_titles.append(make_legend_title(fam_plot_info.family))
+    legend_titles.append(Plotting_utilities.make_legend_title(fam_plot_info.family))
 
     template_time = fam_plot_info.family.template.event.preferred_origin().time.datetime
     plt.axvline(template_time, ymin=0, ls='-', c=color, alpha=1,lw = 1) # adds a vertical line at the location of each template
@@ -53,10 +48,5 @@ lines_for_legend.append(plt.axvline(eruption_time, ymin = 0, ls = "--", label = 
 legend_titles.append("white island eruption")
 
 # format axes and legend
-ax.set_xlabel('date')
-ax.set_ylabel('detection number')
-box = ax.get_position()
-ax.set_ylim(ymin = 0)
-ax.set_position([box.x0, box.y0, box.width * 0.8, box.height])
-legend = ax.legend(lines_for_legend, legend_titles, bbox_to_anchor=(1, 1), markerscale = 1 )
+Plotting_utilities.format_axis_and_legend(ax, lines_for_legend, legend_titles)
 plt.show()
