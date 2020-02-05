@@ -5,7 +5,7 @@ import Plotting_utilities
 
 
 # prepares the data in the given party for plotting
-fam_plot_infos = prep_4_plotting.prep("year_party_1.tgz")
+fam_plot_infos = prep_4_plotting.prep("party.tgz")
 # sets up the initial figure and axes
 fig = plt.figure()
 ax = fig.add_axes([0.1, 0.1, 0.9, 0.9])
