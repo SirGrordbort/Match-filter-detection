@@ -92,23 +92,23 @@ def run(analysis_start, analysis_len, template_creation_start, template_creation
             _party.write(intermediate_party_output+"/Detections_day_{0}".format(day))
         reform_party(final_party_output, intermediate_party_output)
 
+if __name__ == "__main__":
+    analysis_start = UTCDateTime(2018, 12, 9)  # the start time for finding detections
+    analysis_len = 396  # how long (days) after the start time the program should look for detections
+    template_creation_start = UTCDateTime(2018, 12, 9) # start time for finding templates
+    template_creation_len = 396  # how long (days) after the start time the program should look for templates
+    write_streams = True  # whether the program should save the stream as well as the party
 
-analysis_start = UTCDateTime(2018, 12, 9)  # the start time for finding detections
-analysis_len = 396  # how long (days) after the start time the program should look for detections
-template_creation_start = UTCDateTime(2018, 12, 9) # start time for finding templates
-template_creation_len = 396  # how long (days) after the start time the program should look for templates
-write_streams = True  # whether the program should save the stream as well as the party
+    # where the program should save the streams and parties for each day
+    intermediate_party_output = "partys"
+    intermediate_stream_output = "streams"
 
-# where the program should save the streams and parties for each day
-intermediate_party_output = "partys"
-intermediate_stream_output = "streams"
+    # where the program should save final stream and party output
+    final_stream_output = "stream.ms"
+    final_party_output = "party.tgz"
 
-# where the program should save final stream and party output
-final_stream_output = "stream.ms"
-final_party_output = "party.tgz"
+    min_mag = 3.5  # the minimum magnitude a template event can be
 
-min_mag = 3.5  # the minimum magnitude a template event can be
-
-# actually runs the program with the specified input parameters
-run(analysis_start, analysis_len, template_creation_start, template_creation_len, write_streams, intermediate_party_output, final_party_output, intermediate_stream_output, final_stream_output, min_mag)
-print('done')
+    # actually runs the program with the specified input parameters
+    run(analysis_start, analysis_len, template_creation_start, template_creation_len, write_streams, intermediate_party_output, final_party_output, intermediate_stream_output, final_stream_output, min_mag)
+    print('done')
