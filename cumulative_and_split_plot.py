@@ -10,7 +10,7 @@ def make_legend_title(family):
     return time_string + " " + str(num_detections) + " detections"
 
 fam_plot_infos = prep_4_plotting.prep("yr_det_and_temp_party.tgz")
-fig = plt.figure()
+fig = plt.figure()b
 ax = fig.add_axes([0.1, 0.1, 0.9, 0.9])
 lines_for_legend = []
 legend_titles = []
