@@ -1,4 +1,10 @@
-# for making a party from a year of templates and data including the streams
+"""
+Creates a party and associated stream for each day in the specified range
+
+:author: Toby Messerli
+:date: 13/2/2020
+"""
+# FIXME changes without testing
 import logging
 
 logging.basicConfig(
@@ -10,29 +16,32 @@ from collections import Counter
 from obspy.clients.fdsn import Client
 from eqcorrscan.utils.catalog_utils import filter_picks
 from eqcorrscan import Tribe
-import glob
-from eqcorrscan import Party
-from obspy import Stream
-from obspy import read
 import numpy as np
 
-#  reads parties from each day, combines them and writes the combined parties to file
-def reform_party(final_party_output, intermediate_party_output):
-    party = Party()
-    for detection_file in glob.glob(intermediate_party_output+"/*"):
-        party += Party().read(detection_file)
-    party.write(final_party_output)
 
-#  reads streams from each day, combines them and writes the combined streams to file
-def reform_stream(final_stream_output,intermediate_stream_output ):
-    stream = Stream()
-    for stream_file in glob.glob(intermediate_stream_output+"/*"):
-        stream += read(stream_file)
-    stream.split()
-    stream.write(final_stream_output, format="MSEED")
+def run(analysis_start, analysis_len, template_creation_start, template_creation_len, write_streams, party_output_folder, stream_output_folder, min_mag):
+    """
+            begins by creating an tribe of templates from the given specifications then runs these templates against a
+            specified length of seismometer data.
 
+                :type analysis_start: UTCDateTime
+                :param analysis_start: the start time for data that the templates
+                will be run against
+                :type analysis_len: int :param analysis_len: the length of time (days) to run the
+                templates against
+                :type template_creation_start: UTCDateTime
+                :param template_creation_start: the
+                start time for the data used in template creation :type template_creation_len: int
+                :param
+                template_creation_len: length of data (days) used to look for suitable templates
+                :type write_streams:
+                bool
+                :param write_streams: whether this function should save the streams used when detecting events
+                :type party_output_folder, stream_output_folder: string :param party_output_folder,
+                stream_output_folder: the folder name for where to save the stream and party file outputs :type
+                min_mag: double :param min_mag: the minimum magnitude for an event that a template can be based on
+    """
 
-def run(analysis_start, analysis_len, template_creation_start, template_creation_len, write_streams, intermediate_party_output, final_party_output, intermediate_stream_output, final_stream_output, min_mag):
     client = Client("http://service.geonet.org.nz")
     day_len = 86400
     template_creation_end_time = template_creation_start + (template_creation_len * day_len)
@@ -76,21 +85,18 @@ def run(analysis_start, analysis_len, template_creation_start, template_creation
             _party, st = tribe.client_detect(
                 client=client, starttime=analysis_start + (day - 1) * day_len, endtime=analysis_start + day * day_len, threshold=9.,
                 threshold_type="MAD", trig_int=2.0, plot=False, return_stream=True)
-            _party.write(intermediate_party_output+"/Detections_day_{0}".format(day))
+            _party.write(party_output_folder + "/Detections_day_{0}".format(day))
             for trace in st:
                 trace.data = trace.data.astype(np.int32)
             st = st.split()  # Required for writing to miniseed
-            st.write(intermediate_stream_output+"/{0}.ms".format(day), format="MSEED")
-        reform_party(final_party_output, intermediate_party_output)
-        reform_stream(final_stream_output, intermediate_stream_output)
+            st.write(stream_output_folder + "/{0}.ms".format(day), format="MSEED")
 
     else:
         for day in range(1, analysis_len):
             _party = tribe.client_detect(
                 client=client, starttime=analysis_start + (day - 1) * day_len, endtime=analysis_start + day * day_len, threshold=9.,
                 threshold_type="MAD", trig_int=2.0, plot=False, return_stream=False)
-            _party.write(intermediate_party_output+"/Detections_day_{0}".format(day))
-        reform_party(final_party_output, intermediate_party_output)
+            _party.write(party_output_folder + "/Detections_day_{0}".format(day))
 
 if __name__ == "__main__":
     analysis_start = UTCDateTime(2018, 12, 9)  # the start time for finding detections
@@ -103,12 +109,8 @@ if __name__ == "__main__":
     intermediate_party_output = "partys"
     intermediate_stream_output = "streams"
 
-    # where the program should save final stream and party output
-    final_stream_output = "stream.ms"
-    final_party_output = "party.tgz"
-
     min_mag = 3.5  # the minimum magnitude a template event can be
 
     # actually runs the program with the specified input parameters
-    run(analysis_start, analysis_len, template_creation_start, template_creation_len, write_streams, intermediate_party_output, final_party_output, intermediate_stream_output, final_stream_output, min_mag)
+    run(analysis_start, analysis_len, template_creation_start, template_creation_len, write_streams, intermediate_party_output, intermediate_stream_output, min_mag)
     print('done')

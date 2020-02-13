@@ -1,8 +1,13 @@
-# for mapping events from the obspy catalog file into arcGIS
+"""
+creates an ArcGIS map from an obspy catalog, if at all possible use the party_2_map script as it is more reliable and
+has more useful outputs
+
+:author: Toby Messerli
+:date: 13/2/2020
+"""
 import arcpy
-import obspy
-import eqcorrscan
 from obspy import read_events
+
 # The file location of the obspy event catalog
 input_file = arcpy.GetParameterAsText(0)
 
@@ -17,14 +22,14 @@ for event in catalog:
     origin = event.preferred_origin()
     point = arcpy.Point(origin.longitude, origin.latitude)
     points.append(arcpy.PointGeometry(point))
-arcpy.CopyFeatures_management(points,earthquakes)
+arcpy.CopyFeatures_management(points, earthquakes)
 
 # Adds useful fields to the output feature class
 arcpy.AddField_management(earthquakes, "Describe", "STRING")
 arcpy.AddField_management(earthquakes, "Magnitude", "Double")
 arcpy.AddField_management(earthquakes, "Depth", "Double")
 arcpy.AddField_management(earthquakes, "Time", "String")
-eq_cursor = arcpy.da.UpdateCursor(earthquakes, ("Describe","Magnitude","Depth", "Time",))
+eq_cursor = arcpy.da.UpdateCursor(earthquakes, ("Describe", "Magnitude", "Depth", "Time",))
 for row, event in zip(eq_cursor, catalog):
     row[0] = event.short_str()
     row[1] = event.preferred_magnitude().mag

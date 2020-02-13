@@ -1,4 +1,10 @@
+"""
+Makes a plot of cumulative eqcorrscan detections over time. on the same set of axis the plot contains both overall
+cumulative detections and those for each family
 
+:author: Toby Messerli
+:date: 13/2/2020
+"""
 from matplotlib import pyplot as plt
 import prep_4_plotting
 import Plotting_utilities

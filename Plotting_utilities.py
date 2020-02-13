@@ -1,6 +1,14 @@
+"""
+a number of functions useful for plotting detections over time
+
+:author: Toby Messerli
+:date: 13/2/2020
+"""
+
 import datetime
 # makes the text associated with each item in the legend
 def make_legend_title(family):
+
     time = family.template.event.preferred_origin().time.datetime
     time_string = str(time.year)[2:4] + "/" + str(time.month) + "/" + str(time.day) + " " + str(time.hour) + ":" + str(time.minute) + ":" + str(time.second) + "."
     num_detections = len(family.detections)

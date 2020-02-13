@@ -1,3 +1,9 @@
+"""
+Makes a plot of cumulative eqcorrscan detections over time. Just plots overall cumulative detections
+
+:author: Toby Messerli
+:date: 13/2/2020
+"""
 from matplotlib import pyplot as plt
 import prep_4_plotting
 import Plotting_utilities

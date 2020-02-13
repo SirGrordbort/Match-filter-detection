@@ -1,3 +1,16 @@
+"""
+creates an ArcGIS map from an eqcorrscan party. Map features have the following fields:
+Describe: a string with some basic descriptive information about the event
+Magnitude: magnitude of the event
+Depth: depth of the event
+Time: time the event occured
+Is_template: whether the event is also an eqcorrscan template
+family: which family within the party the event belongs to
+
+:author: Toby Messerli
+:date: 13/2/2020
+"""
+# FIXME minor modifications without testing. test as soon as possible
 import arcpy
 from eqcorrscan import Party
 
@@ -20,11 +33,11 @@ arcpy.AddField_management(earthquakes, "family", "String")
 # adds a row of fields to the feature class
 def make_fields(is_template, eq_cursor, event, time, family):
     origin = event.preferred_origin()
+    mag = event.preferred_magnitude()
     desc = event.short_str()
-    if origin is not None:
+    if origin is not None and mag is not None:
         point = arcpy.Point(origin.longitude, origin.latitude)
         shape = arcpy.PointGeometry(point)
-        mag = event.preferred_magnitude().mag
         depth = event.preferred_origin().depth
         eq_cursor.insertRow((shape, desc, mag, depth, time, is_template, family))
     else:
