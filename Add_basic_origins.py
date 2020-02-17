@@ -30,5 +30,5 @@ def add_origins(write, party):
 
 
 if __name__ == "__main__":
-    party = Party().read("party.tgz")
+    party = Party().read("yr_det_and_temp_party.tgz")
     add_origins(True, party)

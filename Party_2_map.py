@@ -23,19 +23,21 @@ output_file = arcpy.GetParameterAsText(1)
 party = Party().read(input_file)
 # creates the feature class and corresponding fields for the party
 earthquakes = arcpy.CreateFeatureclass_management(output_file, "events", "POINT", "", "DISABLED", "DISABLED", "wgs84.prj", "", "","", "", "")
-arcpy.AddField_management(earthquakes, "Describe", "STRING")
-arcpy.AddField_management(earthquakes, "Magnitude", "Double")
-arcpy.AddField_management(earthquakes, "Depth", "Double")
-arcpy.AddField_management(earthquakes, "Time", "String")
-arcpy.AddField_management(earthquakes, "Is_template", "String")
-arcpy.AddField_management(earthquakes, "family", "String")
+arcpy.AddField_management(earthquakes, "Describe", "TEXT")
+arcpy.AddField_management(earthquakes, "Magnitude", "DOUBLE")
+arcpy.AddField_management(earthquakes, "Depth", "DOUBLE")
+arcpy.AddField_management(earthquakes, "Time", "DATE")
+arcpy.AddField_management(earthquakes, "Is_template", "TEXT")
+arcpy.AddField_management(earthquakes, "family", "TEXT")
 
 # adds a row of fields to the feature class
 def make_fields(is_template, eq_cursor, event, time, family):
     origin = event.preferred_origin()
     mag = event.preferred_magnitude()
+    if mag is not None:
+        mag = mag.mag
     desc = event.short_str()
-    if origin is not None and mag is not None:
+    if origin is not None:
         point = arcpy.Point(origin.longitude, origin.latitude)
         shape = arcpy.PointGeometry(point)
         depth = event.preferred_origin().depth
@@ -51,13 +53,13 @@ try:
         template_origin = template_event.preferred_origin()
         if template_origin is None:
             raise RuntimeError("origin for template should not be none")
-        time = template_origin.time.isoformat(sep=' ')
+        time = template_origin.time.datetime
         make_fields("True", eq_cursor, template_event, time, fam.template.name)
 
 
         for detection in fam.detections:
             event = detection.event
-            time = detection.detect_time.isoformat(sep=' ')
+            time = detection.detect_time.datetime
             make_fields("False", eq_cursor, event, time, family = fam.template.name)
 finally:
     del eq_cursor
