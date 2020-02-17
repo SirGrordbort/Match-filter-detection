@@ -1,40 +1,42 @@
 from eqcorrscan import Party
-from obspy import read, UTCDateTime
+from obspy import read
 from obspy import Catalog
 from obspy import Stream
 import glob
-from Add_basic_origins import add_origins
+import logging
+import Add_basic_origins
+
+# debugged by calum
+logging.basicConfig(level="DEBUG")
 
 
-
-
-
-def repick_catalog(streams, parties, start_date):
-    day_len = 86400
+# streams and parties are folders containing a stream and party file for each of 395 days
+def repick_catalog(streams, parties):
     repicked_catalog = Catalog()
-    party_list = []
-    for party_file in glob.glob(parties + "/*"):
-        party_list.append(Party().read(party_file))
-    count = -1
-    num_sliced = 1
-    stream = Stream()
+    # glob doesn't sort - this doesn't guarantee that the stream will correspond to the party - name your files something useful, like the start and end of the data...
+    stream_files = sorted(glob.glob(streams + '/*.ms'))
 
-    for stream_file in glob.glob(streams + "/*"):
+    party_files = sorted(glob.glob(parties + '/*'))
+    count = 0
+
+    for stream_file, party_file in zip(stream_files, party_files):
         count += 1
-        stream += read(stream_file)
-        if count >= 3:
-            print("slicing stream")
-            stream.slice(start_date+day_len*num_sliced)
-            num_sliced += 1
-        if count >= 1:
-            party = party_list[count-1]
-            add_origins(False, party)
-            print("lag_calcing")
+        stream = read(stream_file)  # Adding to the stream will make it longer and longer and longer until RAM ist kaput... Not what you want
+        stream = stream.merge()  # Needs to be a merged stream
+        party = Party().read(party_file)  # Similarly you don't want to add to the party...
+        party = Party([f for f in party if len(f) > 0])  # Removing empty families to get rid of some complaining output
+        Add_basic_origins.add_origins(False, party)
+        try:
             _catalog = party.lag_calc(stream, pre_processed=False, shift_len=0.5, min_cc=0.4)
-            repicked_catalog.extend(_catalog)
+        except(AssertionError):
+            print("Skipped day")
+            continue
+
+        repicked_catalog += _catalog
+        print("day: "+ str(count))
 
     repicked_catalog.write("repicked_catalog", "QUAKEML")
 
+
 if __name__ == "__main__":
-    date = UTCDateTime(2018, 12, 9)
-    repick_catalog("streams", "partys",date )
+    repick_catalog("streams4debug", "partys4debug")
