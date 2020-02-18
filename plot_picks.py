@@ -1,19 +1,14 @@
 """
-plots waveforms and their picks.
+saves waveforms and their picks before they have been repicked.
 
 :author: Toby Messerli
-:date: 17/2/2020
+:date: 18/2/2020
 """
-from obspy import read_events
+from eqcorrscan import Party
+from save_pick_waveforms import process_events
 from obspy.clients.fdsn import Client
-from matplotlib import pyplot as plt
-import plot_event
 
 client = Client("http://service.geonet.org.nz")
-catalog = read_events("repicked_catalog")
-for event in catalog.events:
-    try:
-        fig = plot_event.plot_event_from_client(event, client,length=100)
-    except IndexError:
-        continue
-        # find some way to show the figure without it crashing on the next iteration
+party = Party().read("party_with_origins.tgz")
+for fam in party.families:
+    process_events([detection.event for detection in fam.detections], client, "picked_waveforms")

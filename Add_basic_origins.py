@@ -23,12 +23,13 @@ def add_origins(write, party):
         template_st = template.st
         for det in fam.detections:
             det._calculate_event(template, template_st)
-            # ensures the preffered origin id is set so that the get_preferred_origin method can be used on these events
+            # ensures the preferred origin id is set so that the get_preferred_origin method can be used on these events
             det.event.preferred_origin_id = det.event.origins[0].resource_id
-        if write:
-            party.write("party_with_origins.tgz")
+    if write:
+        party.write("party_with_origins.tgz")
 
 
 if __name__ == "__main__":
-    party = Party().read("yr_det_and_temp_party.tgz")
+    party = Party().read("party.tgz")
+    party = party.copy()
     add_origins(True, party)
