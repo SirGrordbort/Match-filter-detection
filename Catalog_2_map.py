@@ -8,6 +8,7 @@ has more useful outputs
 import arcpy
 from obspy import read_events
 
+# FIXME update to be similar to party_2_map
 # The file location of the obspy event catalog
 input_file = arcpy.GetParameterAsText(0)
 

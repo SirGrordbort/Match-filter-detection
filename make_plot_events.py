@@ -1,6 +1,12 @@
-import multi_picks_on_stream
+"""
+:author: Toby Messerli
+:date: 13/2/2020
+"""
 
 class PlotEvent:
+    """
+    stores events along with the picks and repicks associated with it
+    """
     def __init__(self, event, picks, repicks):
         self.event = event
         self.picks = picks
@@ -14,6 +20,14 @@ class PlotEvent:
 
 
 def make_plot_events(repicked_events, events):
+    """
+    creates a list of PlotEvent objects
+                :return: List of PlotEvent objects
+                :type repicked_events: list of EQcorrscan events
+                :param repicked_events: events who's picks have been re-evaluated by the eqcorrscan lag_calc method
+                :type events: list of EQcorrscan events
+                :param events: list of the same events as in repicked events but who's picks have not been re-evaluated
+    """
     plot_events = []
     event_num = 0
     count = 0
