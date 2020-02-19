@@ -3,7 +3,7 @@
 import numpy as np
 
 
-def plot_event_from_client(plot_event, client, length=60, size=(10.5, 10.5),
+def plot_picks_from_client(pick_event, client, length=60, size=(10.5, 10.5),
                            all_channels=False, filt=None, ignore_rotated=True,
                            return_stream=False):
     """
@@ -21,14 +21,14 @@ def plot_event_from_client(plot_event, client, length=60, size=(10.5, 10.5),
     from obspy.clients.fdsn.client import FDSNNoDataException, FDSNException
 
     try:
-        origin_time = plot_event.event.preferred_origin().time or plot_event.event.origins[0].time
+        origin_time = pick_event.event.preferred_origin().time or pick_event.event.origins[0].time
     except AttributeError:
         # If there isn't an origin time, use the start of the stream
-        origin_time = min([pick.time for pick in plot_event.all_picks])
+        origin_time = min([pick.time for pick in pick_event.all_picks])
     t1 = origin_time - length / 10
     t2 = t1 + length
     bulk = []
-    for pick in plot_event.all_picks:
+    for pick in pick_event.all_picks:
         if all_channels and pick.waveform_id.channel_code:
             channel = "{0}?".format(pick.waveform_id.channel_code[0:2])
         else:
@@ -58,11 +58,11 @@ def plot_event_from_client(plot_event, client, length=60, size=(10.5, 10.5),
     if filt:
         st.detrend().filter('bandpass', freqmin=filt[0], freqmax=filt[1])
     if return_stream:
-        return plot_event(plot_event, st, length=length, size=size), st
-    return plot_event(plot_event, st, length=length, size=size)
+        return plot_event(pick_event, st, length=length, size=size), st,
+    return plot_event(pick_event, st, length=length, size=size)
 
 
-def plot_event(plot_event, st, length=60., size=(10.5, 10.5), fig=None):
+def plot_event(pick_event, st, length=60., size=(10.5, 10.5), fig=None):
     """
     Plot the waveforms for an event with pick and calculated arrival times.
 
@@ -76,7 +76,7 @@ def plot_event(plot_event, st, length=60., size=(10.5, 10.5), fig=None):
     import matplotlib.pyplot as plt
 
     try:
-        origin_time = plot_event.event.preferred_origin().time or plot_event.event.origins[0].time
+        origin_time = pick_event.event.preferred_origin().time or pick_event.event.origins[0].time
     except AttributeError:
         # If there isn't an origin time, use the start of the stream
         origin_time = st[0].stats.starttime
@@ -93,12 +93,16 @@ def plot_event(plot_event, st, length=60., size=(10.5, 10.5), fig=None):
     max_x = []
     for ax, tr in zip(axes, st):
         ax.cla()
-        picks = []
-        for pick in plot_event.event.all_picks:
+        prepicks = []
+        postpicks = []
+        for pick in pick_event.picks:
             if pick.waveform_id.station_code == tr.stats.station:
-                picks.append(pick)
+                prepicks.append(pick)
+        for pick in pick_event.repicks:
+            if pick.waveform_id.station_code == tr.stats.station:
+                postpicks.append(pick)
         lines, labels, chan_min_x, chan_max_x = _plot_channel(
-            ax=ax, tr=tr, picks=picks,  lines=lines,
+            ax=ax, tr=tr, prepicks=prepicks, postpicks=postpicks,  lines=lines,
             labels=labels)
         min_x.append(chan_min_x)
         max_x.append(chan_max_x)
@@ -110,7 +114,7 @@ def plot_event(plot_event, st, length=60., size=(10.5, 10.5), fig=None):
     return fig
 
 
-def _plot_channel(ax, tr, picks=[], lines=[], labels=[]):
+def _plot_channel(ax, tr, prepicks, postpicks, lines=[], labels=[]):
     """ Plot a single channel into an axis object. """
     x = np.arange(0, tr.stats.endtime - tr.stats.starttime + tr.stats.delta,
                   tr.stats.delta)
@@ -124,7 +128,7 @@ def _plot_channel(ax, tr, picks=[], lines=[], labels=[]):
     x = np.array([(tr.stats.starttime + _x).datetime for _x in x])
     min_x, max_x = (x[0], x[-1])
     ax.plot(x, y, 'k', linewidth=1.2)
-    for pick in picks:
+    for pick in prepicks:
         if not pick.phase_hint:
             pcolor = 'k'
             label = 'Unknown pick'
@@ -147,6 +151,29 @@ def _plot_channel(ax, tr, picks=[], lines=[], labels=[]):
         elif pick.time.datetime < min_x:
             min_x = pick.time.datetime
 
+
+    for pick in postpicks:
+        if not pick.phase_hint:
+            pcolor = 'k'
+            label = 'Unknown repick'
+        elif 'P' in pick.phase_hint.upper():
+            pcolor = 'yellow'
+            label = 'P-repick'
+        elif 'S' in pick.phase_hint.upper():
+            pcolor = 'green'
+            label = 'S-repick'
+        else:
+            pcolor = 'k'
+            label = 'Unknown repick'
+        line = ax.axvline(x=pick.time.datetime, color=pcolor, linewidth=2,
+                          linestyle=':', label=label)
+        if label not in labels:
+            lines.append(line)
+            labels.append(label)
+        if pick.time.datetime > max_x:
+            max_x = pick.time.datetime
+        elif pick.time.datetime < min_x:
+            min_x = pick.time.datetime
     ax.set_ylabel(tr.id, rotation=0, horizontalalignment="right")
     ax.yaxis.set_ticks([])
     return lines, labels, min_x, max_x
