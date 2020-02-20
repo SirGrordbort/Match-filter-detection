@@ -2,6 +2,10 @@
 creates an ArcGIS map from an obspy catalog, if at all possible use the party_2_map script as it is more reliable and
 has more useful outputs
 
+WARNING: does not currently work as intended. Use party_2_map instead
+
+Note: must be used with ArcGIS pro. Add this as a script and add two parameters. The first must be a file and the second
+a folder where the output feature class will go. This feature class must then be added to the map before it is visible
 :author: Toby Messerli
 :date: 13/2/2020
 """

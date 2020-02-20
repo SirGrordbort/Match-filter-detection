@@ -58,8 +58,8 @@ def plot_picks_from_client(pick_event, client, length=60, size=(10.5, 10.5),
     if filt:
         st.detrend().filter('bandpass', freqmin=filt[0], freqmax=filt[1])
     if return_stream:
-        return plot_event(pick_event, st, length=length, size=size), st,
-    return plot_event(pick_event, st, length=length, size=size)
+        return plot_picks_from_stream(pick_event, st, length=length, size=size), st,
+    return plot_picks_from_stream(pick_event, st, length=length, size=size)
 
 
 def plot_picks_from_stream(pick_event, st, length=60., size=(10.5, 10.5), fig=None):

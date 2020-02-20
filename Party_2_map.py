@@ -7,6 +7,9 @@ Time: time the event occured
 Is_template: whether the event is also an eqcorrscan template
 family: which family within the party the event belongs to
 
+Note: must be used with ArcGIS pro. Add this as a script and add two parameters. The first must be a file and the second
+a folder where the output feature class will go. This feature class must then be added to the map before it is visible
+
 :author: Toby Messerli
 :date: 13/2/2020
 """

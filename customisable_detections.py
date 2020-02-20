@@ -1,7 +1,7 @@
 """
 Creates a party and associated stream for each day in the specified range
 
-:author: Toby Messerli
+:author: Toby Messerli, Calum J Chamberlain
 :date: 13/2/2020
 """
 # FIXME changes without testing
