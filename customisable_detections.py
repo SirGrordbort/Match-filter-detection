@@ -4,7 +4,6 @@ Creates a party and associated stream for each day in the specified range
 :author: Toby Messerli, Calum J Chamberlain
 :date: 13/2/2020
 """
-# FIXME changes without testing
 import logging
 
 logging.basicConfig(
@@ -65,7 +64,7 @@ def run(analysis_start, analysis_len, template_creation_start, template_creation
                 _picks.append(nslc_picks[0])
         event.picks = _picks
 
-    # selects only the 20 most picked stations
+    # selects only the 20 most picked stations. little data lost but saves heaps of computing time
     catalog = filter_picks(catalog=catalog, evaluation_mode="manual", top_n_picks=20)
 
     # creates and stores group of template objects
@@ -76,19 +75,28 @@ def run(analysis_start, analysis_len, template_creation_start, template_creation
     print(tribe)
     print(tribe[0])
 
-    # keeps only those templates which have more than 5 associated channels
+    # keeps only those templates which have more than 5 associated channels. templates with less than 5 channels are
+    # not super reliable and removing them saves computing time
     tribe.templates = [t for t in tribe if len({tr.stats.station for tr in t.st}) >= 5]
     print(tribe)
 
     if write_streams is True:
+
+        # runs the templates against one day of data at a time to ensure there is enough ram
         for day in range(1, analysis_len):
+
+            # creates a group of events
             _party, st = tribe.client_detect(
                 client=client, starttime=analysis_start + (day - 1) * day_len, endtime=analysis_start + day * day_len, threshold=9.,
                 threshold_type="MAD", trig_int=2.0, plot=False, return_stream=True)
+            # writes each party and stream to disk for each day to stop ram running out
             _party.write(party_output_folder + "/Detections_day_{0}".format(day))
+
+            # required for writing to miniseed. no data is lost as the traces were originally integers
             for trace in st:
                 trace.data = trace.data.astype(np.int32)
             st = st.split()  # Required for writing to miniseed
+            # miniseed compression needed to stop the stream files being huge
             st.write(stream_output_folder + "/{0}.ms".format(day), format="MSEED")
 
     else:

@@ -35,8 +35,22 @@ arcpy.AddField_management(earthquakes, "family", "TEXT")
 
 # adds a row of fields to the feature class
 def make_fields(is_template, eq_cursor, event, time, family):
+    """
+                adds the relevant fields to the cursor which adds them to its feature class
+
+                    :type is_template: boolean
+                    :param is_template: whether the event that is passed in is the event from an eqcorrscan template
+                    :type eq_cursor: an arcpy.da.insertcursor
+                    :param eq_cursor: represents a row in an arcpy feature class that can be inserted
+                    :type event: an obspy event
+                    :param event: information from this event is passed to the eq_cursor
+                    :type time: python datetime object
+                    :param time: the time at which the event occurred
+                    :type family: eqcorrscan family
+                    :param family: the family the event belongs to, added to the cursor
+        """
     origin = event.preferred_origin()
-    mag = event.preferred_magnitude()
+    mag = event.preferred_magnitude()  # this will often be none for the events unless they are a template event
     if mag is not None:
         mag = mag.mag
     desc = event.short_str()
@@ -46,8 +60,8 @@ def make_fields(is_template, eq_cursor, event, time, family):
         depth = event.preferred_origin().depth
         eq_cursor.insertRow((shape, desc, mag, depth, time, is_template, family))
     else:
+        # makes a skeleton row for events without an origin
         eq_cursor.insertRow((None, desc, None, None, time, is_template, family))
-arcpy.AddMessage("party:" + str(party))
 
 eq_cursor = arcpy.da.InsertCursor(earthquakes, ("Shape", "Describe", "Magnitude", "Depth", "Time","Is_template","family",))
 try:
@@ -65,4 +79,4 @@ try:
             time = detection.detect_time.datetime
             make_fields("False", eq_cursor, event, time, family = fam.template.name)
 finally:
-    del eq_cursor
+    del eq_cursor  # deletes the cursor under all conditions to prevent memory leaks

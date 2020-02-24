@@ -1,4 +1,6 @@
-# instructions
+"""
+some example code with instructions helpful for understanding eqcorrscan. doesn't run
+"""
 
 import logging
 

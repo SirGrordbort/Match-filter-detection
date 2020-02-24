@@ -1,4 +1,9 @@
-import cartopy
+"""
+prepares the data within a party to be plotted.
+
+:author: Toby Messerli
+:date: 13/2/2020
+"""
 from eqcorrscan import Party
 
 import math

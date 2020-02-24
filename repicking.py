@@ -1,3 +1,8 @@
+"""
+a script for improving the picks on streams
+:author: Toby Messerli
+:date: 13/2/2020
+"""
 from eqcorrscan import Party
 from obspy import read
 from obspy import Catalog
@@ -22,6 +27,25 @@ def prep_stream(stream, picks):
 
 # streams and parties are folders containing a stream and party file for each of 395 days
 def repick_catalog(streams, parties):
+    """
+                improves the pick location of the events in the parties on the streams and saves an image of the original
+                and improved pick on the stream
+                    :type streams: a folder containing obspy stream files
+                    :type parties: a folder containing eqcorrscan party objects
+
+                    Note: it is important that the stream and party folders contain streams and parties named in such a
+                    way that when sorted by name the first party is associated with the first stream and so on
+
+                    Note: not all picks will have associated repicks. this is because the minimum cross corelation value
+                    is too low for some repicks
+
+                    Note: the repicked images will be saved to different files depending on whether they have repicks
+                    and whether the repicks are different from the originals
+
+                    Note: the repicks are often just a few microseconds different from the original
+
+
+        """
     repicked_catalog = Catalog()
 
     # all the stream and party files for the year and month
@@ -36,6 +60,8 @@ def repick_catalog(streams, parties):
         stream = stream.merge()
         party = Party().read(party_file)
         party = Party([f for f in party if len(f) > 0])  # Removing empty families to get rid of some complaining output
+        # adding origins to the events in the party. these origins are located where the events template is located but
+        # the time is adjusted from the templates origin time
         Add_basic_origins.add_origins(False, party)
 
         try:
@@ -43,7 +69,7 @@ def repick_catalog(streams, parties):
             party_catalog = party_copy.get_catalog()
             _catalog = party.lag_calc(stream, pre_processed=False, shift_len=0.5, min_cc=0.4)  # repicking
 
-            # creates events combined with their pre and post picks
+            # groups events with their pre and post picks
             plot_events = make_plot_events(_catalog.events, party_catalog.events)
 
             for plot_event in plot_events:
@@ -53,7 +79,8 @@ def repick_catalog(streams, parties):
                     st = prep_stream(stream, plot_event.all_picks)  # gets the relevant channels from the stream
                     plot_picks_from_stream(plot_event, st, length=100)  # creates the picks on stream plot
 
-                    # checks whether any of the repicks have actually changed
+                    # checks whether any of the repicks have actually changed from the originals or if there are any
+                    # repicks at all
                     altered = False
                     for pick in plot_event.picks:
                         if pick.time.datetime not in [repick.time.datetime for repick in plot_event.repicks]:
@@ -68,9 +95,9 @@ def repick_catalog(streams, parties):
 
                     plt.savefig(
                         "repicked_events/" + altered_pick + "/" + plot_event.event.preferred_origin().time.ctime())
-                    plt.close(plt.gcf())
+                    plt.close(plt.gcf())  # closes current figure to stop ram running out
         except(AssertionError):
-            print("Skipped day")  # FIXME skips 3 days due to rounding errors
+            print("Skipped day")  # FIXME skips 3 days due to rounding errors updating eqcorrscan should fix this
             continue
 
         repicked_catalog += _catalog

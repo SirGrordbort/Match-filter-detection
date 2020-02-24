@@ -1,4 +1,10 @@
-#TODO properly credit calums work
+"""
+Edited to display the pick and repick for an event on a waveform where before it would only display one pick
+
+:author:Calum J Chamberlain
+:edited by Toby Messerli
+:date: 13/2/2020
+"""
 
 import numpy as np
 
@@ -9,8 +15,8 @@ def plot_picks_from_client(pick_event, client, length=60, size=(10.5, 10.5),
     """
     Plot the waveforms for an event with pick and calculated arrival times.
 
-    :type event: `obspy.core.event.Event`
-    :param event: Event to plot
+    :type pick_event: an object containing an Obspy event along with its picks and repicks
+    :param pick_event: Event and picks to plot
     :param client: An obspy client with `get_waveforms_bulk` method
     :type length: float
     :param length: Length to plot, from origin time.
@@ -66,8 +72,8 @@ def plot_picks_from_stream(pick_event, st, length=60., size=(10.5, 10.5), fig=No
     """
     Plot the waveforms for an event with pick and calculated arrival times.
 
-    :type event: `obspy.core.event.Event`
-    :param event: Event to plot
+    :type pick_event: an object containing an Obspy event along with its picks and repicks
+    :param pick_event: Event and picks to plot
     :type st: `obspy.core.stream.Stream`
     :param st: Obspy Stream for this event
     :type length: float

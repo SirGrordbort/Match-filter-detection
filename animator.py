@@ -5,9 +5,6 @@ Animator for obspy catalogs
 :date: 30/5/2019
 :licence: LGPL v3
 """
-"""
-Note from Toby: needed in to make my animate catalog script work
-"""
 from obspy.imaging.cm import obspy_sequential
 from obspy import Catalog, UTCDateTime
 import numpy as np
