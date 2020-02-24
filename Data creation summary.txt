@@ -1,0 +1,57 @@
+1) ran the customisable_detections.py script with the following parameters and values:
+-analisis_start = UTCDateTime(2018, 12, 9)
+-analysis_len = 365
+-template_creation_start = UTCDateTime(2018, 12, 9)
+-template_creation_len = 396
+-write_streams = true
+-min_mag = 3.5
+-output file names shouldn't make a difference
+-client = Client("http://service.geonet.org.nz")
+-day_len = 86400
+-catalog = client.get_events(
+        starttime=template_creation_start, endtime=template_creation_end_time, minmagnitude=min_mag, 
+	minlatitude=-37.95936, maxlatitude=-36.84226,
+        minlongitude=176.63818, maxlongitude=177.80548)
+where the latitudes and longitude ranges correspond to the area around white island
+-catalog = filter_picks(catalog=catalog, evaluation_mode="manual", top_n_picks=20)
+-tribe = Tribe().construct(
+        method="from_client", lowcut=2.0, highcut=15.0, samp_rate=50.0, length=6.0,
+        filt_order=4, prepick=0.5, client_id=client, catalog=catalog, data_pad=20.,
+        process_len=day_len, min_snr=5.0, parallel=False)
+-_party, st = tribe.client_detect(
+                client=client, starttime=analysis_start + (day - 1) * day_len, endtime=analysis_start + day * day_len, threshold=9.,
+                threshold_type="MAD", trig_int=2.0, plot=False, return_stream=True)
+-st.write(stream_output_folder + "/{0}.ms".format(day), format="MSEED")
+
+2) ran the repicking.py script with the following parameters and values:
+-streams and parties are folders containing each day of parties and streams made in step one. ensure they are
+named in such a way that the day one stream will correspond to the day one party and so on
+-_catalog = party.lag_calc(stream, pre_processed=False, shift_len=0.5, min_cc=0.4)
+-plot_picks_from_stream(plot_event, st, length=100)
+-repicked_catalog.write("repicked_catalog2", "QUAKEML")
+
+3) ran the locate_remove_picks.py script with the following parameters and values:
+
+VELOCITIES = [  # white island velocities Eberhart-Phillips et al., 2010) from their additional information,
+    Velocity(-1.0, 2.07),
+    Velocity(3.0, 5.58),
+    Velocity(8.0, 6.21),
+    Velocity(15.0, 6.63),
+    Velocity(23.0, 6.98),
+    Velocity(30.0, 7.25),
+    Velocity(38.0, 7.78),
+    Velocity(48.0, 8.32),
+    Velocity(65.0, 8.36),
+    Velocity(85.0, 8.22),
+    Velocity(105.0, 8.35),
+    Velocity(130.0, 8.84),
+]
+VPVS = 1.73
+MAX_RMS = 1.5
+MIN_STATIONS = 5
+
+Calum Chamberlain had to work some wizardry to make this work as there was a bug that had something to do with line 114 
+event_back = read_nordic("hyp.out") I believe hyp.out may have been empty for some reason.
+
+
+
