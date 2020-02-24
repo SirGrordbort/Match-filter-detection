@@ -1,5 +1,5 @@
 """
-Creates a party and associated stream for each day in the specified range
+Creates a party and associated stream for each day in the specified range from a specified client
 
 :author: Toby Messerli, Calum J Chamberlain
 :date: 13/2/2020

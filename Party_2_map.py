@@ -13,7 +13,7 @@ a folder where the output feature class will go. This feature class must then be
 :author: Toby Messerli
 :date: 13/2/2020
 """
-# FIXME minor modifications without testing. test as soon as possible
+
 import arcpy
 from eqcorrscan import Party
 

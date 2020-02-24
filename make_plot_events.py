@@ -1,4 +1,5 @@
 """
+creates lists of plot event objects and the objects themselves which hold events and their associated picks and repicks
 :author: Toby Messerli
 :date: 13/2/2020
 """

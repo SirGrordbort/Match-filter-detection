@@ -1,0 +1,82 @@
+Add_basic_origins.py
+- Adds origins to events in a given eqcorrscan party based on the templates associated with those events
+-Toby Messerli
+
+animate_catalog.py
+-Makes a simple animation of a given eqcorrscan Party
+-Toby Messerli
+
+animator.py
+-Animator for obspy catalogs
+-Calum Chamberlain
+
+Catalog_2_map.py
+-creates an ArcGIS map from an obspy catalog
+-Toby Messerli
+
+cumulative_and_split_plot.py
+-Makes a plot of cumulative eqcorrscan detections over time. On the same set of axis the plot contains both overall
+cumulative detections and those for each family
+-Toby Messerli
+
+cumulative_plot.py
+-Makes a plot of cumulative eqcorrscan detections over time. Just plots overall cumulative detections
+-Toby Messerli
+
+customisable_detections.py
+-Creates a party and associated stream for each day in the specified range from a specified client
+-Toby Messerli, Calum Chamberlain
+
+Data creation summary.txt
+-The parameters used to create the latest set of data. some of this will not be stored on Github
+-Toby Messerli
+
+inventory.xml
+-an inventory file used to store stations and channels
+
+locate_remove_picks.py
+-Script to iteratively remove picks and locate using Hypocentre until some
+quality criteria are met.
+-Calum Chamberlain
+
+make_inventory.py
+-makes an obspy inventory object which holds all of the stations and channels associated with the events in the given
+catalog
+-Toby Messerli, Calum Chamberlain
+
+make_plot_events.py
+-creates lists of plot event objects and the objects themselves which hold events and their associated picks and repicks
+-Toby Messerli
+
+multi_picks_on_stream.py
+-displays the pick and repick for an event on a waveform and saves the image
+-Calum Chamberlain, Toby messerli
+
+origin_catalog.xml
+-A catalog containing events with their correct origins
+
+Party_2_map.py
+-creates an ArcGIS map from an eqcorrscan party
+-Toby Messerli
+
+Plotting_utilities.py
+-A number of functions useful for plotting detections over time
+-Toby Messerli
+
+prep_4_plotting.py
+-prepares the data within a party to be plotted.
+-Toby Messerli
+
+repicked_catalog
+-An obspy catalog containing repicked events
+
+repicking.py
+-A script for improving the picks on streams
+-Toby Messerli
+
+split_plot.py
+-Makes a plot of cumulative eqcorrscan detections over time. The plot contains only detections for each party
+-Toby Messerli
+
+wgs84.prj
+-A file containing the wgs84 projection system

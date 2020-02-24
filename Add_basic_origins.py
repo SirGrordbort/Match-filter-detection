@@ -1,5 +1,5 @@
 """
-Adds origins to events in a given eqcorrscan party
+Adds origins to events in a given eqcorrscan party based on the templates associated with those events
 
 :author: Toby Messerli
 :date: 13/2/2020
