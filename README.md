@@ -1,0 +1,1 @@
+This is a project for running analysis on eathquake wave data and plotting the output in arcgis I think most of it wasn't me except for the output. Needs work to figure out how to use it and exacly what it does.
